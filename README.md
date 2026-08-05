@@ -4,14 +4,7 @@ This project trains a sentiment classifier for airline-related tweets using a TF
 
 The dataset contains 14,640 labeled tweets across three classes: negative, neutral, and positive. Negative tweets make up most of the dataset, so the training pipeline uses stratified splits, balanced class weights, and macro-averaged metrics to evaluate performance across all classes.
 
-## Project Summary
-
-- Dataset: airline sentiment tweets
-- Classes: negative, neutral, positive
-- Model: TF-IDF features with logistic regression
-- Evaluation: accuracy, macro precision, macro recall, macro F1, confusion matrix, and per-class analysis
-- Reproducibility: fixed random seed, saved artifacts, and Docker-based notebook environment
-- Deliverables: training notebook, inference notebook, reusable utility module, trained vectorizer, trained model, and EDA report
+I kept the model simple on purpose because this assignment was more useful as a clean baseline than as a black-box leaderboard exercise. The interesting part was not getting a perfect score; it was seeing where a traditional text model struggles, especially on neutral tweets.
 
 ## Current Result
 
@@ -48,10 +41,10 @@ Start Jupyter:
 bash docker_jupyter.sh
 ```
 
-Open the Jupyter URL printed in the terminal, then run:
+Open the Jupyter URL printed in the terminal. The main notebooks are:
 
-1. `sentiment.example.ipynb` to train and evaluate the model
-2. `sentiment.API.ipynb` to load the saved artifacts and run predictions
+- `sentiment.example.ipynb` for training and evaluation
+- `sentiment.API.ipynb` for loading saved artifacts and running predictions
 
 ## Repository Structure
 
@@ -70,19 +63,13 @@ Dockerfile                       container environment
 docker_*.sh                      helper scripts
 ```
 
-## Method
+## Method Notes
 
-The training pipeline follows a standard supervised text-classification workflow:
+The model uses TF-IDF features with unigrams and bigrams, then trains logistic regression with balanced class weights. I used stratified splits because the neutral and positive classes are much smaller than the negative class, and without stratification the validation set can shift enough to make the metrics noisy.
 
-1. Load the tweet dataset.
-2. Clean text by removing URLs, mentions, and non-informative characters.
-3. Encode labels as negative, neutral, and positive.
-4. Split data into train, validation, and test sets using stratification.
-5. Fit a TF-IDF vectorizer with unigrams and bigrams.
-6. Train logistic regression with balanced class weights.
-7. Evaluate overall and per-class metrics.
-8. Review confusion patterns and influential terms.
-9. Save the vectorizer and classifier for reuse.
+The first version looked better than it really was because accuracy was dominated by negative tweets. Macro precision, macro recall, and per-class recall were more useful for understanding whether the classifier was learning all three labels or just leaning into the majority class.
+
+Most of the cleanup is intentionally basic: remove URLs, remove mentions, normalize obvious noise, then let TF-IDF handle the remaining vocabulary. That keeps the error analysis readable. When the model misses, it is usually possible to inspect the tweet and understand why.
 
 ## Inference Example
 
@@ -108,7 +95,7 @@ bash docker_clean.sh      # clean local container artifacts
 - Sarcasm and indirect complaints are difficult for TF-IDF features.
 - Neutral sentiment has lower recall than the positive and negative classes.
 - Each tweet is classified independently, without conversation context.
-- A transformer-based model would likely improve recall, but this project intentionally keeps the baseline simple and interpretable.
+- The model does not use message history, airline metadata, or user-level context.
 
 ## Course Context
 

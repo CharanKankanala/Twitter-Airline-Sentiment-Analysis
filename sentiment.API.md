@@ -1,15 +1,10 @@
-# API Documentation - sentiment.API.ipynb
+# Sentiment API Notebook
 
-Production-ready interface for sentiment predictions.
+This notebook loads the saved TF-IDF vectorizer and logistic regression model, then wraps them in a small `SentimentAPI` class for single-tweet and batch prediction.
 
 ## Overview
 
-This notebook provides a clean API for making predictions on new airline tweets.
-
-**Key Components:**
-- Load pre-trained vectorizer and model
-- `SentimentAPI` class with prediction methods
-- Examples and use cases
+The notebook is meant to show that the training artifacts can be reused without rerunning the full training notebook. It covers loading the model files, making predictions, returning probability scores, and running a few examples that are easy to inspect.
 
 ## Loading Models
 
@@ -32,7 +27,7 @@ class SentimentAPI:
     def predict_batch_with_confidence(texts: List[str]) -> List[Dict]
 ```
 
-### Method 1: `predict(text)`
+### `predict(text)`
 
 Single text prediction.
 
@@ -41,9 +36,7 @@ api.predict("I love this airline!")
 # Returns: "positive"
 ```
 
-**When to use:** Interactive apps, real-time feedback
-
-### Method 2: `predict_batch(texts)`
+### `predict_batch(texts)`
 
 Multiple texts at once (faster than calling predict() multiple times).
 
@@ -56,9 +49,7 @@ api.predict_batch([
 # Returns: ["negative", "neutral", "positive"]
 ```
 
-**When to use:** Batch processing, reports, bulk analysis
-
-### Method 3: `predict_with_confidence(text)`
+### `predict_with_confidence(text)`
 
 Prediction + probability distribution.
 
@@ -71,9 +62,7 @@ api.predict_with_confidence("Not bad, not great")
 # }
 ```
 
-**When to use:** Uncertainty quantification, threshold filtering
-
-### Method 4: `predict_batch_with_confidence(texts)`
+### `predict_batch_with_confidence(texts)`
 
 Batch + probabilities.
 
@@ -91,19 +80,12 @@ api.predict_batch_with_confidence([...])
 - **Encoding:** UTF-8
 - **Handling:** Text is cleaned automatically
 
-Valid inputs:
+Example inputs:
 ```
-"Great flight!" ✓
-"@AirlineX Bad service http://t.co/xyz" ✓ (cleaned)
-"AMAZING!!!" ✓ (all caps)
-"Flight was okay-ish" ✓
-```
-
-Invalid inputs:
-```
-"" ✗ (empty)
-None ✗ (null)
-123 ✗ (not string)
+"Great flight!"
+"@AirlineX Bad service http://t.co/xyz"
+"AMAZING!!!"
+"Flight was okay-ish"
 ```
 
 ### Output
